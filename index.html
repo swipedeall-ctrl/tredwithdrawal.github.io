@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profit Withdrawal | Payment Required</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .profit-display {
+            background-color: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .profit-amount {
+            font-size: 42px;
+            font-weight: bold;
+            color: #28a745;
+            margin: 15px 0;
+        }
+        
+        .withdrawal-section {
+            padding: 30px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .withdrawal-option {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .withdrawal-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .withdrawal-option.selected {
+            border-color: #3498db;
+            background-color: #f0f8ff;
+        }
+        
+        .option-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .option-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .tax-badge {
+            background-color: #ff7675;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .tax-free {
+            background-color: #00b894;
+        }
+        
+        .option-details {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .amount-details {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .final-amount {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #ddd;
+        }
+        
+        .withdraw-btn {
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .withdraw-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .withdraw-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .upi-details {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .usdt-note {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        
+        .success-message {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        
+        .success-icon {
+            font-size: 60px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        
+        .tax-confirmation {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .confirmation-text {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+        
+        .confirm-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .confirm-checkbox input {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .tax-warning {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .method-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        
+        .payment-section {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .payment-title {
+            font-size: 22px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .payment-amount {
+            font-size: 28px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 10px 0;
+        }
+        
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            margin: 15px auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: white;
+        }
+        
+        .qr-code img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .payment-instructions {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: left;
+        }
+        
+        .payment-instructions ol {
+            padding-left: 20px;
+        }
+        
+        .payment-instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .transaction-id-section {
+            margin-top: 20px;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            z-index: 2;
+        }
+        
+        .step.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .step.completed {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .step-label {
+            position: absolute;
+            top: 35px;
+            font-size: 12px;
+            text-align: center;
+            width: 100px;
+            left: -35px;
+        }
+        
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            height: 2px;
+            background-color: #ddd;
+            z-index: 1;
+        }
+        
+        .step-1 .step-label {
+            left: 0;
+        }
+        
+        .step-2 .step-label {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .step-3 .step-label {
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Profit Withdrawal</h1>
+            <p>Withdraw your trading profits securely</p>
+        </div>
+        
+        <div class="profit-display">
+            <p>Your Available Profit</p>
+            <div class="profit-amount">₹19,999.00</div>
+            <p>Ready for withdrawal</p>
+        </div>
+        
+        <div class="withdrawal-section">
+            <div class="step-indicator">
+                <div class="step active" id="step1">1</div>
+                <div class="step" id="step2">2</div>
+                <div class="step" id="step3">3</div>
+                <div class="step-label step-1">Select Method</div>
+                <div class="step-label step-2">Pay Tax</div>
+                <div class="step-label step-3">Complete</div>
+            </div>
+            
+            <h2 class="section-title">Select Withdrawal Method</h2>
+            
+            <div class="withdrawal-option" id="upiOption">
+                <div class="option-header">
+                    <div class="option-title">
+                        <i class="fas fa-mobile-alt method-icon"></i>
+                        UPI Transfer
+                    </div>
+                    <div class="tax-badge">6% Tax</div>
+                </div>
+                <div class="option-details">
+                    Instant transfer to your bank account via UPI. 6% tax will be deducted.
+                </div>
+                <div class="amount-details">
+                    <div class="detail-row">
+                        <span>Profit Amount:</span>
+                        <span>₹19,999.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Tax (6%):</span>
+                        <span>- ₹1,199.94</span>
+                    </div>
+                    <div class="detail-row final-amount">
+                        <span>You Will Receive:</span>
+                        <span>₹18,799.06</span>
+                    </div>
+                </div>
+                <div class="tax-warning">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>6% tax must be paid before withdrawal</span>
+                </div>
+                <div class="upi-details" id="upiForm">
+                    <div class="form-group">
+                        <label for="upiId">UPI ID</label>
+                        <input type="text" id="upiId" placeholder="yourname@upi">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="withdrawal-option selected" id="usdtOption">
+                <div class="option-header">
+                    <div class="option-title">
+                        <i class="fab fa-bitcoin method-icon"></i>
+                        USDT (Crypto)
+                    </div>
+                    <div class="tax-badge tax-free">0% Tax</div>
+                </div>
+                <div class="option-details">
+                    Receive USDT directly to your crypto wallet. No tax deduction.
+                </div>
+                <div class="amount-details">
+                    <div class="detail-row">
+                        <span>Profit Amount:</span>
+                        <span>₹19,999.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Tax (0%):</span>
+                        <span>₹0.00</span>
+                    </div>
+                    <div class="detail-row final-amount">
+                        <span>You Will Receive:</span>
+                        <span>₹19,999.00</span>
+                    </div>
+                </div>
+                <div class="usdt-note">
+                    <i class="fas fa-info-circle"></i> You will receive equivalent USDT based on current exchange rates.
+                </div>
+            </div>
+            
+            <button class="withdraw-btn" id="withdrawButton">PROCEED TO PAYMENT</button>
+            
+            <div class="payment-section" id="paymentSection">
+                <h2 class="payment-title">Pay Tax Amount</h2>
+                <p>You need to pay the following tax amount to complete your withdrawal:</p>
+                <div class="payment-amount">₹1,199.94</div>
+                
+                <div class="qr-code">
+                    <img src="https://i.ibb.co/Gf9WNvCN/IMG-20250830-WA0001.jpg" alt="Tax Payment QR Code">
+                </div>
+                
+                <div class="payment-instructions">
+                    <h3><i class="fas fa-info-circle"></i> Payment Instructions:</h3>
+                    <ol>
+                        <li>Open your UPI payment app (Google Pay, PhonePe, Paytm, etc.)</li>
+                        <li>Scan the QR code shown above</li>
+                        <li>Pay the exact amount: <strong>₹1,199.94</strong></li>
+                        <li>Enter your UPI transaction ID below after payment</li>
+                    </ol>
+                </div>
+                
+                <div class="transaction-id-section">
+                    <div class="form-group">
+                        <label for="transactionId">Enter UPI Transaction ID:</label>
+                        <input type="text" id="transactionId" placeholder="Enter transaction reference number">
+                    </div>
+                    <button class="withdraw-btn" id="verifyPaymentBtn">VERIFY PAYMENT & COMPLETE WITHDRAWAL</button>
+                </div>
+            </div>
+            
+            <div class="success-message" id="successMessage">
+                <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+                <h2>Withdrawal Successful!</h2>
+                <p>₹18,799.06 will be transferred to your account within 24 hours.</p>
+                <p>Transaction ID: <span id="displayTransactionId"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const upiOption = document.getElementById('upiOption');
+            const usdtOption = document.getElementById('usdtOption');
+            const upiForm = document.getElementById('upiForm');
+            const withdrawButton = document.getElementById('withdrawButton');
+            const paymentSection = document.getElementById('paymentSection');
+            const successMessage = document.getElementById('successMessage');
+            const upiIdInput = document.getElementById('upiId');
+            const transactionIdInput = document.getElementById('transactionId');
+            const verifyPaymentBtn = document.getElementById('verifyPaymentBtn');
+            const displayTransactionId = document.getElementById('displayTransactionId');
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+            
+            // Set USDT as default selected
+            let selectedMethod = 'usdt';
+            
+            // Toggle between UPI and USDT options
+            upiOption.addEventListener('click', function() {
+                upiOption.classList.add('selected');
+                usdtOption.classList.remove('selected');
+                upiForm.style.display = 'block';
+                selectedMethod = 'upi';
+            });
+            
+            usdtOption.addEventListener('click', function() {
+                usdtOption.classList.add('selected');
+                upiOption.classList.remove('selected');
+                upiForm.style.display = 'none';
+                selectedMethod = 'usdt';
+            });
+            
+            // Handle withdraw button click
+            withdrawButton.addEventListener('click', function() {
+                if (selectedMethod === 'upi') {
+                    // For UPI, validate UPI ID
+                    if (upiIdInput.value.trim() === '' || !isValidUPI(upiIdInput.value.trim())) {
+                        alert('Please enter a valid UPI ID (e.g., name@upi)');
+                        return;
+                    }
+                    
+                    // Show payment section
+                    document.querySelector('.section-title').style.display = 'none';
+                    upiOption.style.display = 'none';
+                    usdtOption.style.display = 'none';
+                    withdrawButton.style.display = 'none';
+                    paymentSection.style.display = 'block';
+                    
+                    // Update step indicator
+                    step1.classList.remove('active');
+                    step1.classList.add('completed');
+                    step2.classList.add('active');
+                    
+                } else {
+                    // For USDT, directly show success
+                    document.querySelector('.section-title').style.display = 'none';
+                    upiOption.style.display = 'none';
+                    usdtOption.style.display = 'none';
+                    withdrawButton.style.display = 'none';
+                    successMessage.style.display = 'block';
+                    
+                    // Update step indicator
+                    step1.classList.remove('active');
+                    step1.classList.add('completed');
+                    step2.classList.remove('active');
+                    step2.classList.add('completed');
+                    step3.classList.add('active');
+                }
+            });
+            
+            // Handle payment verification
+            verifyPaymentBtn.addEventListener('click', function() {
+                if (transactionIdInput.value.trim() === '') {
+                    alert('Please enter your UPI transaction ID');
+                    return;
+                }
+                
+                // Show success message
+                paymentSection.style.display = 'none';
+                successMessage.style.display = 'block';
+                displayTransactionId.textContent = transactionIdInput.value.trim();
+                
+                // Update step indicator
+                step2.classList.remove('active');
+                step2.classList.add('completed');
+                step3.classList.add('active');
+            });
+            
+            // Validate UPI ID format
+            function isValidUPI(upiId) {
+                const upiRegex = /^[a-zA-Z0-9.\-_]{2,49}@[a-zA-Z]{2,}$/;
+                return upiRegex.test(upiId);
+            }
+        });
+    </script>
+</body>
+</html>
